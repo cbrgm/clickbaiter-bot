@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clickbaiter-bot
+  namespace: production
+  labels:
+    app: clickbaiter-bot
+    commit: {{ .DroneCommit }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: clickbaiter-bot
+  template:
+    metadata:
+      labels:
+        app: clickbaiter-bot
+    spec:
+      containers:
+        - name: clickbaiter-bot
+          image: quay.io/cbrgm/clickbaiter-bot:latest
+          imagePullPolicy: Always
+          env:
+            - name: TWEET_INTERVAL
+              value: "300"
+          envFrom:
+          - secretRef:
+              name: clickbaiter-bot-creds
